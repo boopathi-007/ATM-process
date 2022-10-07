@@ -1,0 +1,38 @@
+public class AtmDb{
+    private int balaceMoney;
+    private  int depositMoney;
+    private int withdrawalMoney;
+
+    public AtmDb() {
+    }
+
+    public AtmDb(int balaceMoney, int depositMoney, int withdrawalMoney) {
+        this.balaceMoney = balaceMoney;
+        this.depositMoney = depositMoney;
+        this.withdrawalMoney = withdrawalMoney;
+    }
+
+    public int getBalaceMoney() {
+        return balaceMoney;
+    }
+
+    public void setBalaceMoney(int balaceMoney) {
+        this.balaceMoney = balaceMoney;
+    }
+
+    public int getDepositMoney() {
+        return depositMoney;
+    }
+
+    public void setDepositMoney(int depositMoney) {
+        this.depositMoney = depositMoney;
+    }
+
+    public int getWithdrawalMoney() {
+        return withdrawalMoney;
+    }
+
+    public void setWithdrawalMoney(int withdrawalMoney) {
+        this.withdrawalMoney = withdrawalMoney;
+    }
+}

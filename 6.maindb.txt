@@ -1,0 +1,208 @@
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class Main {
+    public static void main(String[] args) {
+        try(Scanner scanner=new Scanner(System.in);) {
+            AtmDb atmDb=new AtmDb();
+            HandleAtm handleAtm=new HandleAtm();
+            HandleCustomer handleCustomer=new HandleCustomer();
+
+            TreeMap<String, CustomerDb> db=new TreeMap<>();
+            int[] note=new int[]{2000, 500, 100};
+            HandleDenomination handleDenom=new HandleDenomination();
+            while (true){
+                int choice=0;
+                System.out.println("Choose any Option(Before ATM Withdraw...You need to Load ATM)\n1. Load ATM\n2. Withdraw From ATM\n3. Check ATM Balance\n4. Create Account\n5. Transfer\n6. Check Account Balance\n7. Display All Customer Details\n8. Deposit\n9. End");
+                choice=scanner.nextInt();
+                System.out.println();
+                scanner.nextLine();
+                switch (choice){
+                    case 1:
+                    {
+                        System.out.println("--------    Load ATM    --------");
+                        System.out.println("Enter the Denomination to deposit(2000:10, 500:5) : ");
+                        String[] denom=scanner.nextLine().split(",");
+                        int f=1;
+                        for(String seperate:denom){
+                            String[] values=seperate.split(":");
+                            int amount=Integer.valueOf(values[0].trim());
+                            int denom=Integer.valueOf(values[1]);
+                            if(amount<0||denom<0){
+                                System.out.println("Incorrect Deposit amount");
+                            }
+                            else if (amount==0||denom==0){
+                                System.out.println("Deposit amount cannot be Zero");
+                            }
+                            else{
+                                handleAtm.updateDenom(amount, denom, handleDenom);
+                            }
+                        }
+
+                            handleAtm.updateDepositingAmount(atmDb, handleDenom);
+
+
+                        System.out.println("Denomination            Number  Value       ");
+                        System.out.println("2000                    "+handleDenom.getTwoThousand()+"       "+2000*handleDenom.getTwoThousand());
+                        System.out.println("500                     "+handleDenom.getFiveHundred()+"       "+500*handleDenom.getFiveHundred());
+                        System.out.println("100                     "+handleDenom.getOneHundred()+"       "+100*handleDenom.getOneHundred());
+                        break;
+                    }
+                    case 2:
+                    {
+                        System.out.println("--------    Withdraw    --------");
+
+                        System.out.println("Enter the Account Number : ");
+                        String accountNo=scanner.next();
+                        System.out.println("Enter the Pin Number : ");
+                        String pinNo=scanner.next();
+                        if(handleCustomer.validAccNo(accNo, db)&&handleCustomer.validPinNo(accNo, pinNo, db)){
+                            System.out.println("Enter the amount to Withdraw : ");
+                            int withdrawalMoney=scanner.nextInt();
+                            if(withdrawalMoney<=0||withdrawalMoney>atmDb.getBalaceMoney()){
+                                System.out.println("Incorrect or Insufficient Funds");break;
+                            }
+                            else if(db.get(accNo).getAccountBalance()>10000||db.get(accNo).getAccountBalance()<100){
+                                System.out.println("Withdraw Amount should maximum 10000 and minimum 100");break;
+                            }
+                            db.get(accNo).withdraw(accNo, withdrawalMoney, db);
+                            int f=1;
+                            int[] dispensingDenom=handleAtm.dispensingDenom(note, withdrawalMoney);
+                            for(int i=0;i< note.length;i++){
+                                if(dispensingDenom[i]>0){
+                                    f=handleAtm.reduceDenom(note[i], dispensingDenom[i], handleDenom);
+                                }
+                            }
+                            System.out.println();
+                            if(f==1)
+                                handleAtm.updateWithdraw(atmDb, withdrawalMoney);
+                            else {
+                                System.out.println("No Available Denomination");
+                                break;
+                            }
+                        }
+                        else{
+                            System.out.println("Invalid Account Number or Pin Number");break;
+                        }
+                        break;
+                    }
+                    case 3:
+                    {
+                        int currentAtmBalance=atmDb.getBalaceMoney();
+                        if(currentAtmBalance<=0){
+                            System.out.println("No Fund");
+                            continue;
+                        }
+                        else{
+                            System.out.println("-------- Current ATM Balance --------");
+                            System.out.println("Denomination            Number  Value       ");
+                            System.out.println("2000                    "+handleDenom.getTwoThousand()+"       "+2000*handleDenom.getTwoThousand());
+                            System.out.println("500                     "+handleDenom.getFiveHundred()+"       "+500*handleDenom.getFiveHundred());
+                            System.out.println("100                     "+handleDenom.getOneHundred()+"       "+100*handleDenom.getOneHundred());
+                            System.out.println("Total Amount available in ATM is = Rs. "+atmDb.getBalaceMoney());
+                        }
+                        break;
+                    }
+                    case 4:
+                    {
+                        System.out.println("-------- Create Savings Account -------- ");
+                        System.out.println("Enter the New Account Number : ");
+                        String accNo=scanner.nextLine();
+                        System.out.println("Enter the Customer Name : ");
+                        String accountHolder=scanner.nextLine();
+                        System.out.println("Enter the New Pin Number : ");
+                        String pinNo=scanner.nextLine();
+                        System.out.println("Enter the Amount to Deposit : ");
+                        int accountBalance=scanner.nextInt();
+                        if(accountBalance>=500){
+                            CustomerDb customerDb=new CustomerDb(accNo,accountHolder, pinNo, acoountBalance);
+                            db.put(accNo, customerDb);
+                        }
+                        else{
+                            System.out.println("Minimum Balance Must be 500 or above");
+                            break;
+                        }
+                        break;
+                    }
+                    case 5:
+                    {
+                        System.out.println("--------    Money Transfer    --------");
+
+                        System.out.println("Enter the Account Number : ");
+                        String fromAccNo=scanner.next();
+                        System.out.println("Enter the Pin Number : ");
+                        String fromPinNo=scanner.next();
+                        if(handleCustomer.validAccNo(fromAccNo, db)&&handleCustomer.validPinNo(fromAccNo, fromPinNo, db)){
+                            System.out.println("Enter the Account Number to make Transfer : ");
+                            String toAccNo=scanner.next();
+                            System.out.println("Enter the Amount to Transfer : ");
+                            int transferAmount=scanner.nextInt();
+                            handleCustomer.transferAmount(fromAccNo, toAccNo, transferAmount, db);
+                        }
+                        else{
+                            System.out.println("Invalid Account Number or Pin Number");
+                            break;
+                        }
+                        break;
+                    }
+                    case 6:
+                    {
+                        System.out.println("--------    Check Account Balance    --------");
+
+                        System.out.println("Enter the Account Number : ");
+                        String accNo=scanner.next();
+                        System.out.println("Enter the Pin Number : ");
+                        String pinNo=scanner.next();
+                        if(handleCustomer.validAccNo(accNo, db)&&handleCustomer.validPinNo(accNo, pinNo, db)){
+                            System.out.println("AccNo  AccountHolder    PinNumber AccountBalance");
+                            System.out.println(accountNumber+"        "+db.get(accNo).getAccountHolder()+"        "+pinNo+"        "+db.get(accNo).getAccountBalance());
+                        }
+                        else{
+                            System.out.println("Invalid Account Number or Pin Number");
+                            break;
+                        }
+                        break;
+                    }
+                    case 7:
+                    {
+                        System.out.println("-------- Customer Details ---------");
+                        System.out.println("AccNo    Account Holder    Pin Number    Account Balance");
+                        for(Map.Entry<String, CustomerDb> entry: db.entrySet()){
+                            System.out.println(entry.getValue().getAccNo()+"       "+entry.getValue().getAccountHolder()+"        "+entry.getValue().getPinNo()+"        "+entry.getValue().getAccountBalance());
+                        }
+                    }
+                    case 8:
+                    {
+                        System.out.println("-------- Deposit --------");
+                        System.out.println("Enter the Account Number : ");
+                        String accNo=scanner.next();
+                        if(handleCustomer.validAccNo(accNo, db)){
+                            System.out.println("Enter the Amount to Deposit : ");
+                            int depositAmount=scanner.nextInt();
+                            db.get(accNo).deposit(accNo, depositAmount, db);
+                            System.out.println("Your Current Account Balance is Rs. "+db.get(accNo).getAccountBalance());
+                        }
+                        else{
+                            System.out.println("Please Enter valid Account Number...");break;
+                        }break;
+                    }
+                    case 9:
+                    {
+                        System.out.println("Thank You!");
+                        System.exit(0);
+                    }
+                    default:
+                    {
+                        System.out.println("Please Enter valid option...");
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+}

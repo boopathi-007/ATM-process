@@ -1,0 +1,82 @@
+
+public class HandleAtm { 
+    public static void updateDenom(int amount, int denom, HandleDenomination handleDenom){
+        if(amount==2000){
+                handleDenomination.setTwoThousand(handleDenom.getTwoThousand()+denom);
+        }
+        else if(amount==500){
+                handleDenom.setFiveHundred(handleDenom.getFiveHundred()+denom);
+        }
+        else if(amount==100){
+                handleDenom.setOneHundred(handleDenom.getOneHundred()+denom);
+        }
+    }
+
+    public static int reduceDenom(int amount, int denom, HandleDenomination handleDenom){
+        int f1=0, f2=0;
+        if(amount==2000){
+            if(handleDenom.getTwoThousand()>0){
+                handleDenom.setTwoThousand(handleDenom.getTwoThousand()-denom);
+                return 1;
+            }
+            else if(handleDenom.getFiveHundred()>0){
+                f1=1;
+                handleDenom.setFiveHundred(handleDenom.getFiveHundred()-denom);
+            }
+            else if(handleDenom.getOneHundred()>0){
+                f2=1;
+                handleDenom.setOneHundred(handleDenom.getOneHundred()-denom);
+            }
+        }
+        else if(amount==500){
+            if(handleDenom.getFiveHundred()>0){
+                if(f1==0){
+                    handleDenom.setFiveHundred(handleDenom.getFiveHundred()-denom);
+                    return 1;
+                }
+            }
+            else if(handleDenom.getOneHundred()>0)
+                if(f2==0)
+                handleDenom.setOneHundred(handleDenom.getOneHundred()-denom);
+        }
+        else if(amount==100){
+            if(handleDenom.getOneHundred()>0){
+                if(f2==0){
+                handleDenom.setOneHundred(handleDenom.getOneHundred()-denom);
+                return 1;}
+            }
+        }
+        return -1;
+    }
+
+    public static void updateDepositingAmount(AtmDb atmDb, HandleDenomination handleDenom){
+        int depositingAmount=handleDenomination.getTwoThousand()*2000+handleDenom.getFiveHundred()*500+handleDenom.getOneHundred()*100;
+        atmDb.setDeposingAmount(depositingAmount);
+        atmDb.setBalaceAmount(atmDb.getDeposingAmount());
+    }
+
+    public static void updateWithdraw(AtmDb atmDb, int withdrawalMoney){
+        atmDatabase.setWithdrawalMoney(withdrawalMoney);
+        atmDatabase.setBalaceAmount(atmDb.getBalaceAmount()-withdrawalMoney);
+    }
+
+    public static int[] dispensingDenom(int[] note, int withdrawalMoney){
+        int[] noteCounter=new int[note.length];
+        for(int i=0;i<note.length;i++){
+            if(withdrawalMoney>=note[i]){
+                noteCounter[i]=withdrawalMoney/notes[i];
+                withdrawalMoney=withdrawalMoney-noteCounter[i]*note[i];
+            }
+        }
+        return noteCounter;
+    }
+
+}
+
+
+
+
+
+
+
+

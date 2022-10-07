@@ -1,0 +1,56 @@
+import java.util.TreeSet;
+import java.util.*;
+public class CustomerDb{
+    private  String accNo;
+    private String accountHolder;
+    private String pinNo;
+    private int accountBalance;
+
+
+    public CustomerDb(){
+
+    }
+
+    public CustomerDb(String accNo, String accountHolder, String pinNo, int accountBalance) {
+        this.accNo = accNo;
+        this.accountHolder = accountHolder;
+        this.pinNo = pinNo;
+        this.accountBalance = accountBalance;
+    }
+
+    public String getAccNo() {
+        return accNo;
+    }
+
+    public String getAccountHolder() {
+        return customerName;
+    }
+
+    public String getPinNo() {
+        return pinNo;
+    }
+
+    public int getAccountBalance() {
+        return accountBalance;
+    }
+
+    public void setAccountHolder(String accountHolder) {
+        this.accountHolder = accountHolder;
+    }
+
+    public void setPinNo(String pinNo) {
+        this.pinNo = pinNo;
+    }
+
+    public void setAccountBalance(int accountBalance) {
+        this.accountBalance = accountBalance;
+    }
+
+    public void withdraw(String accNo,int amount, TreeMap<String, CustomerDb> db){
+         db.get(accNo).setAccountBalance(getAccountBalance()-amount);
+    }
+
+    public void deposit(String accNo, int amount, TreeMap<String, CustomerDb> db){
+        db.get(accNo).setAccountBalance(getAccountBalance()+amount);
+    }
+}

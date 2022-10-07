@@ -1,0 +1,23 @@
+import java.util.TreeMap;
+
+public class HandleCustomer {
+
+    public boolean validAccNo(String accNo, TreeMap<String, CustomerDb> db){
+        if(accNo.equals(db.get(accNo).getAccNo())){
+            return true;
+        }
+        return false;
+    }
+    public boolean validPinNo(String accNo, String pinNo, TreeMap<String, CustomerDb> db){
+        if(pinNo.equals(db.get(accNo).getPinNo())){
+            return true;
+        }
+        return false;
+    }
+
+
+    public void transferAmount(String fromAccNo, String toAccNo, int amount, TreeMap<String, CustomerDb> db){
+        db.get(fromAccNo).withdraw(fromAccNo, amount, db);
+        db.get(toAccNo).deposit(toAccNo, amount, db);
+    }
+}
